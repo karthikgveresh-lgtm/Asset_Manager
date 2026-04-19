@@ -1,8 +1,9 @@
 version: '3.8'
 services:
-  hello-world-app:
+  api:
     build: .
-    container_name: python_hello_world
-    # Ensure it prints to console without buffering
+    container_name: asset_manager_api
+    ports:
+      - "8000:8000"
     environment:
       - PYTHONUNBUFFERED=1
