@@ -10,16 +10,17 @@ from sqlalchemy.orm import Session
 from datetime import date
 from typing import List
 
-import models
-import schemas
-from database import get_db
+import Backend.models as models
+import Backend.schemas as schemas
+from Backend.database import get_db
+from Backend.auth import RequirePrivilege
 
 router = APIRouter(
     prefix="/api/assignments",
     tags=["Assignments & Workflow"]
 )
 
-@router.post("/", response_model=schemas.AssignmentResponse, status_code=201)
+@router.post("/", response_model=schemas.AssignmentResponse, status_code=201, dependencies=[Depends(RequirePrivilege('create:assignment'))])
 def assign_asset(assignment: schemas.AssignmentCreate, db: Session = Depends(get_db)):
     """
     Assign an available asset to an employee.
@@ -58,7 +59,7 @@ def assign_asset(assignment: schemas.AssignmentCreate, db: Session = Depends(get
 
     return db_assignment
 
-@router.put("/{id}/return", response_model=schemas.AssignmentResponse)
+@router.put("/{id}/return", response_model=schemas.AssignmentResponse, dependencies=[Depends(RequirePrivilege('update:assignment'))])
 def return_asset(id: int, return_data: schemas.AssignmentReturn, db: Session = Depends(get_db)):
     """
     Return an assigned asset from an employee.

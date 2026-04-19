@@ -9,6 +9,21 @@ from pydantic import BaseModel, EmailStr
 from typing import Optional, List
 from datetime import date, datetime
 
+# --- Role Schemas ---
+class RoleBase(BaseModel):
+    name: str
+    permissions: List[str]
+
+class RoleCreate(RoleBase):
+    pass
+
+class RoleResponse(RoleBase):
+    id: int
+
+    class Config:
+        orm_mode = True
+        from_attributes = True
+
 # --- Employee Schemas ---
 class EmployeeBase(BaseModel):
     employee_code: str
@@ -17,7 +32,7 @@ class EmployeeBase(BaseModel):
     email: EmailStr
     phone_number: Optional[str] = None
     department: Optional[str] = None
-    role: Optional[str] = "Employee"
+    role_id: Optional[int] = None
     is_active: Optional[bool] = True
 
 class EmployeeCreate(EmployeeBase):
@@ -29,7 +44,7 @@ class EmployeeUpdate(BaseModel):
     email: Optional[EmailStr] = None
     phone_number: Optional[str] = None
     department: Optional[str] = None
-    role: Optional[str] = None
+    role_id: Optional[int] = None
     is_active: Optional[bool] = None
 
 class EmployeeResponse(EmployeeBase):

@@ -5,10 +5,17 @@ This module defines the SQLAlchemy ORM models representing the database tables.
 It maps Python classes to the SQLite database tables (employees, assets, etc.).
 """
 
-from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, DateTime, Text, Enum, Float
+from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, DateTime, Text, Float, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
 from routers.Backend.database import Base
+
+class Role(Base):
+    __tablename__ = "roles"
+
+    id = Column(Integer, primary_key=True, index=True)
+    name = Column(String(50), unique=True, index=True, nullable=False)
+    permissions = Column(JSON, nullable=False) # e.g. ["read:assets", "delete:assets"]
 
 class Employee(Base):
     __tablename__ = "employees"
@@ -20,9 +27,11 @@ class Employee(Base):
     email = Column(String(150), unique=True, index=True, nullable=False)
     phone_number = Column(String(20), nullable=True)
     department = Column(String(100), nullable=True)
-    role = Column(String(50), default="Employee") # Admin, HR, Employee
+    role_id = Column(Integer, ForeignKey("roles.id"), nullable=True)
     is_active = Column(Boolean, default=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    role = relationship("Role")
 
 class Asset(Base):
     __tablename__ = "assets"

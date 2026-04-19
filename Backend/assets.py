@@ -9,9 +9,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
-import routers.Backend.models
-import routers.Backend.schemas
+import routers.Backend.models as models
+import routers.Backend.schemas as schemas
 from routers.Backend.database import get_db
+from routers.Backend.auth import RequirePrivilege
 
 router = APIRouter(
     prefix="/api/assets",
@@ -43,7 +44,7 @@ def get_asset(id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Asset not found")
     return asset
 
-@router.post("/", response_model=schemas.AssetResponse, status_code=201)
+@router.post("/", response_model=schemas.AssetResponse, status_code=201, dependencies=[Depends(RequirePrivilege('create:asset'))])
 def create_asset(asset: schemas.AssetCreate, db: Session = Depends(get_db)):
     """
     Add a new asset to the system inventory.
@@ -69,7 +70,7 @@ def create_asset(asset: schemas.AssetCreate, db: Session = Depends(get_db)):
 
     return db_asset
 
-@router.put("/{id}", response_model=schemas.AssetResponse)
+@router.put("/{id}", response_model=schemas.AssetResponse, dependencies=[Depends(RequirePrivilege('update:asset'))])
 def update_asset(id: int, asset_update: schemas.AssetUpdate, db: Session = Depends(get_db)):
     """
     Update an existing asset's details.
@@ -102,7 +103,7 @@ def update_asset(id: int, asset_update: schemas.AssetUpdate, db: Session = Depen
 
     return db_asset
 
-@router.patch("/{id}/status", response_model=schemas.AssetResponse)
+@router.patch("/{id}/status", response_model=schemas.AssetResponse, dependencies=[Depends(RequirePrivilege('update:asset_status'))])
 def change_asset_status(id: int, status_update: schemas.AssetStatusUpdate, db: Session = Depends(get_db)):
     """
     Mark an asset as damaged, lost, or retired.
