@@ -8,7 +8,7 @@ and includes all the sub-routers for different modules.
 
 from fastapi import FastAPI
 from database import engine, Base
-from routers import employees, assets, assignments, dashboard
+import employees, assets, assignments, dashboard
 
 # Create all database tables based on our SQLAlchemy models
 Base.metadata.create_all(bind=engine)
