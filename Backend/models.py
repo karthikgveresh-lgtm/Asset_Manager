@@ -8,7 +8,7 @@ It maps Python classes to the SQLite database tables (employees, assets, etc.).
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, DateTime, Text, Float, JSON
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
-from routers.Backend.database import Base
+from database import Base
 
 class Role(Base):
     __tablename__ = "roles"

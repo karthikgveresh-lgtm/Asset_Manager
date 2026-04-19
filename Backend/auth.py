@@ -8,8 +8,8 @@ from fastapi import Depends, HTTPException, Header
 from sqlalchemy.orm import Session
 from typing import Optional
 
-import routers.Backend.models as models
-from routers.Backend.database import get_db
+import models
+from database import get_db
 
 def get_current_user(authorization: Optional[str] = Header(None), db: Session = Depends(get_db)):
     """

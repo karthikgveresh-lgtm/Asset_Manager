@@ -9,10 +9,10 @@ from fastapi import APIRouter, Depends, HTTPException
 from sqlalchemy.orm import Session
 from typing import List
 
-import Backend.models as models
-import Backend.schemas as schemas
-from Backend.database import get_db
-from Backend.auth import RequirePrivilege
+import models
+import schemas
+from database import get_db
+from auth import RequirePrivilege
 
 router = APIRouter(
     prefix="/api/employees",
