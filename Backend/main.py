@@ -7,6 +7,7 @@ and includes all the sub-routers for different modules.
 """
 
 from fastapi import FastAPI
+from fastapi.middleware.cors import CORSMiddleware
 from database import engine, Base
 import employees, assets, assignments, dashboard
 
@@ -18,6 +19,16 @@ app = FastAPI(
     title="AssetTracker Pro API",
     description="An industrial-grade asset management system API. Built for tracking company assets across 1000+ employees.",
     version="1.0.0",
+    redirect_slashes=False
+)
+
+# Enable CORS for deployment
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=["*"],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
 )
 
 # Include all the API routers
