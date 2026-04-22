@@ -22,10 +22,13 @@ export default function DashboardPage() {
     const fetchStats = async () => {
       try {
         const apiUrl = process.env.NEXT_PUBLIC_API_URL || "https://localhost:8000";
-        const response = await fetch(`${apiUrl}/api/dashboard/stats/`);
+        const response = await fetch(`${apiUrl}/api/dashboard/stats`);
         if (response.ok) {
           const data = await response.json();
+          console.log("Dashboard stats received:", data);
           setStats(data);
+        } else {
+          console.error("Dashboard fetch failed:", response.status);
         }
       } catch (error) {
         console.error("Failed to fetch dashboard stats:", error);
