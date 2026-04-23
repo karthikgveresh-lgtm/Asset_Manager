@@ -1,8 +1,5 @@
 """
 Database Models Module
-
-This module defines the SQLAlchemy ORM models representing the database tables.
-It maps Python classes to the SQLite database tables (employees, assets, etc.).
 """
 
 from sqlalchemy import Boolean, Column, ForeignKey, Integer, String, Date, DateTime, Text, Float, JSON
@@ -15,7 +12,7 @@ class Role(Base):
 
     id = Column(Integer, primary_key=True, index=True)
     name = Column(String(50), unique=True, index=True, nullable=False)
-    permissions = Column(JSON, nullable=False) # e.g. ["read:assets", "delete:assets"]
+    permissions = Column(JSON, nullable=False)
 
 class Employee(Base):
     __tablename__ = "employees"
@@ -25,6 +22,7 @@ class Employee(Base):
     first_name = Column(String(100), nullable=False)
     last_name = Column(String(100), nullable=False)
     email = Column(String(150), unique=True, index=True, nullable=False)
+    password = Column(String(255), nullable=True, default="password123") # Added password field
     phone_number = Column(String(20), nullable=True)
     department = Column(String(100), nullable=True)
     role_id = Column(Integer, ForeignKey("roles.id"), nullable=True)
@@ -43,7 +41,7 @@ class Asset(Base):
     serial_number = Column(String(150), nullable=True)
     purchase_date = Column(Date, nullable=True)
     purchase_cost = Column(Float, nullable=True)
-    status = Column(String(50), default="Available") # Available, Assigned, In Maintenance, Lost, Retired
+    status = Column(String(50), default="Available")
     notes = Column(Text, nullable=True)
     created_at = Column(DateTime(timezone=True), server_default=func.now())
 
@@ -51,16 +49,19 @@ class AssetAssignment(Base):
     __tablename__ = "asset_assignments"
 
     id = Column(Integer, primary_key=True, index=True)
-    asset_id = Column(Integer, index=True, nullable=False) # Simple ID reference
-    employee_id = Column(Integer, index=True, nullable=False) # Simple ID reference
+    asset_id = Column(Integer, ForeignKey("assets.id"), index=True, nullable=False)
+    employee_id = Column(Integer, ForeignKey("employees.id"), index=True, nullable=False)
     assigned_by_id = Column(Integer, nullable=False)
     assignment_date = Column(Date, nullable=False)
     expected_return_date = Column(Date, nullable=True)
     actual_return_date = Column(Date, nullable=True)
     assignment_notes = Column(Text, nullable=True)
     return_notes = Column(Text, nullable=True)
-    status = Column(String(50), default="Active") # Active, Returned
+    status = Column(String(50), default="Active")
     created_at = Column(DateTime(timezone=True), server_default=func.now())
+
+    asset = relationship("Asset")
+    employee = relationship("Employee")
 
 class AuditLog(Base):
     __tablename__ = "audit_logs"
